@@ -9,10 +9,14 @@ global.todoApp = {
     deleteTask: jest.fn(),
 };
 
+jest.useFakeTimers();
+
 
 describe('TodoApp.addTask', () => {
   let app;
   let mockInput, mockAddBtn, mockList, mockTotal, mockCompleted, mockRemaining, mockClearBtn;
+
+  const TEST_TASK_ID = 1;
 
 
   beforeEach(() => {
@@ -28,6 +32,7 @@ describe('TodoApp.addTask', () => {
       <button class="filter-btn" data-filter="all"></button>
       <button class="filter-btn" data-filter="active"></button>
       <button class="filter-btn" data-filter="completed"></button>
+      <div class="todo-item" data-id="${TEST_TASK_ID}">Task to be deleted</div>
     `;
 
     mockInput = document.getElementById('taskInput');
@@ -42,6 +47,11 @@ describe('TodoApp.addTask', () => {
     app = new TodoApp(false);
     jest.spyOn(app, 'saveTasks').mockImplementation(() => {});
     jest.spyOn(app, 'render').mockImplementation(() => {});
+
+    app.tasks = [
+        { id: TEST_TASK_ID, text: 'Task for Deletion', completed: false },
+        { id: 99, text: 'Keep me', completed: false }
+    ]
   });
 
   afterEach(() => {
@@ -62,16 +72,22 @@ describe('TodoApp.addTask', () => {
 
 
 
-  // THE TEST FOR TOGGLE TASK LOGIC
+  // THE TEST FOR ADD TASK LOGIC
 
-  test('task becomes completed when toggled', () => {
-    mockInput.value = 'Completed Task';
-    app.addTask();
+  test('deletes task', () => {
+    expect(app.tasks.length).toBe(2);
+    app.deleteTask(TEST_TASK_ID)
+    
+    expect(app.tasks.length).toBe(2);
+    expect(app.saveTasks).not.toHaveBeenCalled();
 
-    app.toggleTask(app.tasks[0].id);
-    expect(app.tasks[0].completed).toBe(true);
+    jest.runAllTimers();
+
+    expect(app.tasks.length).toBe(1); // Array length is now 1
+    expect(app.tasks[0].id).toBe(99);
     expect(app.saveTasks).toHaveBeenCalled();
     expect(app.render).toHaveBeenCalled();
   });
 
+  
 });
