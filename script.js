@@ -1,5 +1,5 @@
-class TodoApp {
-    constructor() {
+export class TodoApp {
+    constructor(autoInit = true) {
         this.tasks = [];
         this.filter = 'all';
         this.nextId = 1;
@@ -13,7 +13,7 @@ class TodoApp {
         this.clearCompletedBtn = document.getElementById('clearCompleted');
         this.filterButtons = document.querySelectorAll('.filter-btn');
         
-        this.init();
+        if (autoInit) this.init();
     }
 
     init() {
@@ -199,5 +199,4 @@ style.textContent = `
 `;
 document.head.appendChild(style);
 
-// Initialize the app
-const todoApp = new TodoApp();
+
