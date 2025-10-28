@@ -1,7 +1,7 @@
 /**
  * @jest-environment jsdom
  */
-import { jest } from '@jest/globals';
+import { expect, jest } from '@jest/globals';
 import { TodoApp } from '../script';
 
 global.todoApp = {
@@ -9,14 +9,10 @@ global.todoApp = {
     deleteTask: jest.fn(),
 };
 
-jest.useFakeTimers();
-
 
 describe('TodoApp.addTask', () => {
   let app;
   let mockInput, mockAddBtn, mockList, mockTotal, mockCompleted, mockRemaining, mockClearBtn;
-
-  const TEST_TASK_ID = 1;
 
 
   beforeEach(() => {
@@ -32,7 +28,6 @@ describe('TodoApp.addTask', () => {
       <button class="filter-btn" data-filter="all"></button>
       <button class="filter-btn" data-filter="active"></button>
       <button class="filter-btn" data-filter="completed"></button>
-      <div class="todo-item" data-id="${TEST_TASK_ID}">Task to be deleted</div>
     `;
 
     mockInput = document.getElementById('taskInput');
@@ -48,10 +43,13 @@ describe('TodoApp.addTask', () => {
     jest.spyOn(app, 'saveTasks').mockImplementation(() => {});
     jest.spyOn(app, 'render').mockImplementation(() => {});
 
+
     app.tasks = [
-        { id: TEST_TASK_ID, text: 'Task for Deletion', completed: false },
-        { id: 99, text: 'Keep me', completed: false }
-    ]
+        { id: 1, text: 'Be Happy', completed: false },
+        { id: 2, text: 'Write this test', completed: true },
+        { id: 3, text: 'Be Cracked', completed: true },
+        { id: 4, text: 'Get A Job', completed: false },
+    ];
   });
 
   afterEach(() => {
@@ -72,22 +70,36 @@ describe('TodoApp.addTask', () => {
 
 
 
-  // THE TEST FOR DELETE TASK LOGIC
+    // THE TEST FOR Clear Completed TASK LOGIC
 
-  test('deletes task', () => {
-    expect(app.tasks.length).toBe(2);
-    app.deleteTask(TEST_TASK_ID)
-    
-    expect(app.tasks.length).toBe(2);
-    expect(app.saveTasks).not.toHaveBeenCalled();
+    test('clears completed task', () => {
+        expect(app.tasks.length).toBe(4)
+        app.clearCompleted();
 
-    jest.runAllTimers(); // Simulate the SetTimer Logic
+        expect(app.tasks.length).toBe(2)
 
-    expect(app.tasks.length).toBe(1); // Array length is now 1
-    expect(app.tasks[0].id).toBe(99);
-    expect(app.saveTasks).toHaveBeenCalled();
-    expect(app.render).toHaveBeenCalled();
-  });
+        // Ensure the remaining tasks are the active ones
+        expect(app.tasks.some(t => t.id === 2)).toBe(false);
+        expect(app.tasks.some(t => t.id === 3)).toBe(false); 
 
-  
+        // Ensure the remaining tasks are the correct active ones
+        expect(app.tasks[0].id).toBe(1); 
+        expect(app.tasks[1].id).toBe(4);
+
+        expect(app.saveTasks).toHaveBeenCalled();
+        expect(app.render).toHaveBeenCalled();
+    });
+
+    test('does nothing when the tasks array is already empty', () => {
+        // array to be empty
+        app.tasks = []; 
+
+        //run logic
+        app.clearCompleted();
+
+        expect(app.tasks).toHaveLength(0)
+        expect(app.saveTasks).toHaveBeenCalled(); 
+        expect(app.render).toHaveBeenCalled();
+    });
+
 });
