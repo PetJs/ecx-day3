@@ -1,5 +1,19 @@
 {
-  "name": "Using fixtures to represent data",
-  "email": "hello@cypress.io",
-  "body": "Fixtures are a great way to mock data for responses to routes"
+  "todos": [
+    {
+      "id": 1,
+      "text": "Buy groceries",
+      "completed": false
+    },
+    {
+      "id": 2,
+      "text": "Walk the dog",
+      "completed": true
+    },
+    {
+      "id": 3,
+      "text": "Read a book",
+      "completed": false
+    }
+  ]
 }
