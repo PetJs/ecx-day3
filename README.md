@@ -35,7 +35,7 @@ It is fully tested using Jest (unit tests) and Cypress (E2E tests).
 ### 1. Clone the Repository
 
 ```bash
-git clone [https://github.com/your-username/todo-app.git](https://github.com/your-username/todo-app.git)
+git clone https://github.com/PetJs/ecx-day3.git
 cd todo-app
 ```
 
@@ -67,4 +67,4 @@ npx cypress open
 ```
 
 ## Deployed Link
-![Demo](https://ecx-day3.vercel.app/)
+[Demo](https://ecx-day3.vercel.app/)
