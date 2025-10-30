@@ -66,4 +66,33 @@ describe('Test the Todo App', () => {
     cy.get('@firstTask').should('have.class', 'completed');
 
   })
+
+  it('deletes a task',  () => {
+    cy.get('.todo-item').last().as('lastTask');
+    cy.get('@lastTask').find('.delete-btn').click();
+
+    // Assert that the task is removed 
+    cy.get('#totalTasks').should('contain.text', '2');
+    cy.get('.todo-item').should('have.length', 2); 
+  })
+
+  it('Clears completed tasks when "Clear Completed" is clicked', () => {
+    // Ensure there is at least one completed task before clearing
+    cy.get('.todo-item.completed').should('exist');
+
+    // Click the "Clear Completed" button
+    cy.get('#clearCompleted').click();
+
+    // The completed task(s) should be gone
+    cy.get('.todo-item.completed').should('not.exist');
+
+    // Total task count should decrease
+    cy.get('#totalTasks').invoke('text').then(totalBefore => {
+      const before = parseInt(totalBefore);
+      expect(before).to.be.lessThan(4); // depends on your initial list
+    });
+
+    // The "Clear Completed" button should now be disabled
+    cy.get('#clearCompleted').should('be.disabled');
+  });
 });
